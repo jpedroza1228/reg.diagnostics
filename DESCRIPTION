@@ -1,6 +1,6 @@
 Package: reg.diagnostics
 Title: Regression Diagnostics
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person(given = "Jonathan",
            family = "Pedroza",
@@ -25,4 +25,6 @@ Depends:
         MASS (>= 7.3-53),
         car (>= 3.0-10),
         brant (>= 0.3-0),
-        broom (>= 0.7.5)
+        broom (>= 0.7.5),
+        spdep
+        
