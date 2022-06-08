@@ -1,37 +1,50 @@
 #' Function to get proportions and percentages of a single variable
 #'
-#' This function is to examine normality and linearity of a linear regression in the form of histograms of your predictor and your outcome as well as a scatterplot of these variables.
+#' This function calculates the proportion and perception of the variable chosen. Additionally, the function also provides a bar graph for the variable chosen.
 #'
-#' @param data The data frame that includes the factor variable you are interested in getting proportions, percentages, and a visual of groups in the variable.
-#' @param x The X variable you'd like to examine.
-#' @param fill Value to determine the color you'd like your bar graph to be filled with. The outline of the histograms is set to "White"
-#' @param total Numerical value of your total sample in your study.
-#' @return Returns a list with a visual of the groups and a table of the proportions and percentages
+#' @param data The data frame that includes the variable you are interested in getting proportions, percentages, and a visual of groups in the variable.
+#' @param x The variable you'd like to examine.
+#' @param fill The color you'd like to make your bar graph columns. The default is dodgerblue and the outline is set to white.
+#' @return Returns a list with a bar graph and a table of the proportions and percentages.
 #' @export
 #' @examples
 #'
-#' To examine the visual
-#' freq_bar(mtcars, as.factor(cyl), fill = "dodgerblue", total = 32)[[1]]
+#' To examine the visual.
+#' freq_bar(mtcars, cyl))[[1]]
 #'
-#' To create a table
-#' freq_bar(mtcars, as.factor(cyl), fill = "dodgerblue", total = 32)[[2]]
+#' To create a table.
+#' freq_bar(mtcars, cyl, fill = 'darkgreen')[[2]]
+#'
+#' To examine both. In RStudio, visual will be in Plots, while the table will be in Viewer.
+#' freq_bar(mtcars, cyl)
+#'
+#' Can also use tidyverse syntax with pluck to retrieve visual or table.
+#' mtcars %>%
+#' freq_bar(cyl) %>%
+#' pluck(1)
 
-freq_bar <- function(data, x, fill, total){
+freq_bar <- function(data,
+                     x,
+                     fill = 'dodgerblue'){
 
   library(magrittr)
 
-  bar_plot <- ggplot2::ggplot({{data}}, aes({{x}})) +
-    ggplot2::geom_bar(color = "white", fill = {{fill}}) +
-    ggplot2::theme_minimal()
+  bar_plot <- ggplot2::ggplot({{data}},
+                              aes({{x}})) +
+    ggplot2::geom_bar(color = "white",
+                      fill = {{fill}})
 
-  summary <- {{data}} %>%
+  prop_sum <- {{data}} %>%
     dplyr::group_by({{x}}) %>%
     dplyr::summarize(n = n(),
-              prop = n/total,
-              percent = prop*100)
+                     prop = n/nrow({{data}}),
+                     percent = prop*100)
 
-  table <- reactable::reactable(summary)
+  table <- reactable::reactable(prop_sum) %>%
+    reactablefmtr::add_title('Proportions & Percentages')
 
-  return(list(bar_plot, table))
+  return(list(Plot = bar_plot,
+              Table = table))
 
 }
+
